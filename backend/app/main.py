@@ -8,6 +8,8 @@ from typing import Any
 from dotenv import load_dotenv
 from fastapi import BackgroundTasks, FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from app.services.ingest import IngestError, validate_git_url
@@ -223,3 +225,17 @@ def delete_repository(analysis_id: str) -> dict[str, Any]:
     if not store.delete(analysis_id):
         raise HTTPException(status_code=404, detail="Analysis workspace not found.")
     return {"deleted": True, "id": analysis_id}
+
+
+FRONTEND_DIST = Path(__file__).resolve().parents[2] / "frontend" / "dist"
+if (FRONTEND_DIST / "assets").is_dir():
+    app.mount("/assets", StaticFiles(directory=str(FRONTEND_DIST / "assets")), name="assets")
+
+
+@app.get("/", include_in_schema=False)
+def serve_spa_index() -> Any:
+    index_file = FRONTEND_DIST / "index.html"
+    if index_file.is_file():
+        return FileResponse(str(index_file))
+    return {"status": "ok", "message": "RepoWise API running. Run npm run build in frontend/ to serve UI."}
+
