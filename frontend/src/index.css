@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color-scheme: dark;
+}
+
+.display-title {
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+  font-optical-sizing: auto;
+}
+
+.glass-bar {
+  background: rgba(15, 18, 23, 0.78);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.btn-press {
+  transition: transform 140ms var(--ease-out-strong), background-color 160ms ease, border-color 160ms ease;
+}
+
+.btn-press:active {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card-lift {
+    transition: transform 180ms var(--ease-out-strong), border-color 180ms ease;
+  }
+  .card-lift:hover {
+    transform: translateY(-2px);
+    border-color: rgba(45, 212, 191, 0.38);
+  }
+}
+
+.panel-enter {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 180ms var(--ease-out-strong), transform 180ms var(--ease-out-strong);
+  @starting-style {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-press,
+  .card-lift,
+  .panel-enter {
+    transition: opacity 150ms ease !important;
+    transform: none !important;
+  }
+}
