@@ -82,12 +82,11 @@ export function App() {
 
   async function refreshRepositories() {
     try {
-      const list = await api.listRepos();
+      const list = (await api.listRepos()).filter((r) => r.status === 'completed');
       setRepos(list);
       if (list.length > 0 && !activeRepo) {
         await loadWorkspace(list[0].id);
       } else if (list.length === 0) {
-        // Auto-bootstrap RepoWise self-analysis so the workspace shows real live evidence immediately
         await handleSelfAnalyze();
       }
     } catch (err) {
@@ -106,18 +105,18 @@ export function App() {
         api.getAutopilot(id),
       ]);
       setActiveRepo(analysis);
-      setFiles(fileData.files);
-      setExcluded(fileData.excluded);
-      setGraphNodes(graphData.nodes);
-      setGraphEdges(graphData.edges);
-      setHistoryData(histData);
-      setAutopilotData(autoData);
+      setFiles(fileData.files || []);
+      setExcluded(fileData.excluded || []);
+      setGraphNodes(graphData.nodes || []);
+      setGraphEdges(graphData.edges || []);
+      setHistoryData(histData && Array.isArray(histData.commits) ? histData : null);
+      setAutopilotData(autoData && Array.isArray(autoData.days) ? autoData : null);
 
       const firstPy =
-        analysis.summary.hub_files?.[0] ||
-        analysis.summary.entrypoints?.[0] ||
-        fileData.files.find((f) => f.language === 'python')?.path ||
-        fileData.files[0]?.path ||
+        analysis.summary?.hub_files?.[0] ||
+        analysis.summary?.entrypoints?.[0] ||
+        (fileData.files || []).find((f) => f.language === 'python')?.path ||
+        (fileData.files || [])[0]?.path ||
         null;
 
       if (firstPy) {
@@ -443,32 +442,32 @@ export function App() {
                   {[
                     {
                       label: 'Indexed Files',
-                      value: activeRepo.summary.total_files,
+                      value: activeRepo.summary?.total_files ?? 0,
                       sub: `${excluded.length} paths excluded safely`,
                     },
                     {
                       label: 'Lines of Code',
-                      value: activeRepo.summary.total_lines.toLocaleString(),
+                      value: (activeRepo.summary?.total_lines ?? 0).toLocaleString(),
                       sub: 'Static read-only scan',
                     },
                     {
                       label: 'Extracted Symbols',
-                      value: activeRepo.summary.total_symbols,
+                      value: activeRepo.summary?.total_symbols ?? 0,
                       sub: 'AST classes, defs, methods',
                     },
                     {
                       label: 'Import Edges',
-                      value: activeRepo.summary.total_edges,
+                      value: activeRepo.summary?.total_edges ?? 0,
                       sub: 'Confirmed file-level links',
                     },
                     {
                       label: 'API Routes',
-                      value: activeRepo.summary.total_routes,
+                      value: activeRepo.summary?.total_routes ?? 0,
                       sub: 'Observed decorator endpoints',
                     },
                     {
                       label: 'Secrets Redacted',
-                      value: activeRepo.summary.redacted_secrets_total,
+                      value: activeRepo.summary?.redacted_secrets_total ?? 0,
                       sub: 'Stripped before indexing',
                     },
                   ].map((stat) => (

@@ -47,13 +47,17 @@ class WorkspaceStore:
                 aid = data.get("id")
                 if not aid:
                     continue
+                if data.get("status") != "completed":
+                    # Clean up interrupted scans from previous killed processes
+                    snap_file.unlink(missing_ok=True)
+                    shutil.rmtree(self.repos_dir / aid, ignore_errors=True)
+                    continue
                 self.analyses[aid] = data
-                if data.get("status") == "completed":
-                    g, _ = build_dependency_graph(
-                        data.get("files", []), data.get("file_imports", {})
-                    )
-                    self.graphs[aid] = g
-                    self.retrievers[aid] = CodeRetriever(data.get("chunks", []))
+                g, _ = build_dependency_graph(
+                    data.get("files", []), data.get("file_imports", {})
+                )
+                self.graphs[aid] = g
+                self.retrievers[aid] = CodeRetriever(data.get("chunks", []))
             except Exception:
                 pass
 
