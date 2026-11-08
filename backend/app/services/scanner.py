@@ -105,6 +105,7 @@ SECRET_PATTERNS = [
     re.compile(r"\bgithub_pat_[A-Za-z0-9_]{22,255}\b"),
     re.compile(r"\bsk-[A-Za-z0-9_\-]{20,}\b"),
     re.compile(r"\bAIza[0-9A-Za-z_\-]{35}\b"),
+    re.compile(r"\bAQ\.[A-Za-z0-9_\-]{25,}\b"),
     re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
     re.compile(r"\bxox[baprs]-[0-9A-Za-z\-]{10,}\b"),
     re.compile(

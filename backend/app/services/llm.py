@@ -195,7 +195,7 @@ def answer_grounded_question(
         return res
 
     api_key = os.getenv("LLM_API_KEY", "").strip()
-    model_name = os.getenv("LLM_MODEL", "gemini-2.5-flash").strip()
+    model_name = os.getenv("LLM_MODEL", "gemini-3.8-flash").strip()
     raw_result: dict[str, Any] | None = None
 
     if api_key and api_key.lower() not in {"replace_me", "none", "your_api_key"}:
