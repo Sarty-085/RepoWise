@@ -815,17 +815,42 @@ export function App() {
             {/* TAB 4: KNOWLEDGE CONTINUITY & BUS-FACTOR HANDOVER CAPSULES */}
             {activeTab === 'continuity' && historyData && (
               <section className="panel-enter space-y-5">
-                <div className="bg-[#0F1217] border border-[#1E242D] rounded-xl p-5 flex flex-wrap items-center justify-between gap-4">
-                  <div>
-                    <h2 className="text-base font-semibold text-white flex items-center gap-2">
-                      <ShieldAlert className="w-4 h-4 text-[#F59E0B]" />
-                      Knowledge Continuity & Bus-Factor Handover Capsules
-                    </h2>
-                    <p className="text-xs text-[#94A3B8] mt-1">{historyData.note}</p>
+                <div className="bg-[#0F1217] border border-[#1E242D] rounded-xl p-5 space-y-4">
+                  <div className="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                      <h2 className="text-base font-semibold text-white flex items-center gap-2">
+                        <ShieldAlert className="w-4 h-4 text-[#F59E0B]" />
+                        Bus-Factor & Knowledge Handover („What if our main developer leaves?“)
+                      </h2>
+                      <p className="text-xs text-[#94A3B8] mt-1">
+                        Finds folders where <strong>one person wrote ≥70% of the commits</strong> and prepares a ready-made handover guide before that knowledge is lost.
+                      </p>
+                    </div>
+                    <div className="text-xs font-mono bg-[#141820] border border-[#242C3A] px-3 py-1.5 rounded-lg text-[#5EEAD4]">
+                      {historyData.total_commits_scanned ?? 0} commits scanned •{' '}
+                      {historyData.contributors.length} contributors
+                    </div>
                   </div>
-                  <div className="text-xs font-mono bg-[#141820] border border-[#242C3A] px-3 py-1.5 rounded-lg text-[#5EEAD4]">
-                    {historyData.total_commits_scanned ?? 0} commits scanned •{' '}
-                    {historyData.contributors.length} contributors
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2 border-t border-[#1E242D] text-xs">
+                    <div className="bg-[#141820] rounded-lg p-3 border border-[#1E242D]">
+                      <div className="font-semibold text-white">1. Spot Knowledge Silos</div>
+                      <p className="text-[#94A3B8] mt-0.5">
+                        See which folders depend on a single author and how many other files import them.
+                      </p>
+                    </div>
+                    <div className="bg-[#141820] rounded-lg p-3 border border-[#1E242D]">
+                      <div className="font-semibold text-white">2. Inspect Key Functions</div>
+                      <p className="text-[#94A3B8] mt-0.5">
+                        Click any function under <em>Must-Know Functions</em> to jump straight to the code lines.
+                      </p>
+                    </div>
+                    <div className="bg-[#141820] rounded-lg p-3 border border-[#1E242D]">
+                      <div className="font-semibold text-white">3. Run a Handover Interview</div>
+                      <p className="text-[#94A3B8] mt-0.5">
+                        Ask the owner the <em>Questions to Ask Before They Leave</em> during a 15-minute handover call.
+                      </p>
+                    </div>
                   </div>
                 </div>
 
@@ -839,19 +864,19 @@ export function App() {
                       <div className="space-y-3">
                         <div className="flex items-center justify-between gap-2">
                           <span className="font-mono text-xs font-semibold px-2.5 py-1 rounded bg-[#F59E0B]/15 text-[#FCD34D] border border-[#F59E0B]/30">
-                            Risk Score: {cap.risk_score}
+                            Handover Priority: {cap.risk_score}
                           </span>
                           <span className="text-xs font-mono text-[#94A3B8]">
-                            {cap.concentration_pct}% single-owner
+                            {cap.concentration_pct}% written by 1 person
                           </span>
                         </div>
 
                         <div>
                           <h3 className="font-mono text-sm font-semibold text-white">
-                            Module: {cap.folder}
+                            Folder: {cap.folder}
                           </h3>
                           <p className="text-xs text-[#5EEAD4] mt-0.5">
-                            Primary Owner: {cap.primary_owner}
+                            Go-To Expert: <strong>{cap.primary_owner}</strong>
                           </p>
                         </div>
 
@@ -859,7 +884,7 @@ export function App() {
 
                         <div>
                           <div className="text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8] mb-1.5">
-                            Critical Symbols to Hand Over
+                            Must-Know Functions (Click to Open Code)
                           </div>
                           <ul className="space-y-1">
                             {cap.key_symbols.map((sym) => (
@@ -885,7 +910,7 @@ export function App() {
                         {cap.commit_evidence.length > 0 && (
                           <div>
                             <div className="text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8] mb-1.5">
-                              Observed Commit Clues
+                              Recent Changes by Owner
                             </div>
                             <ul className="space-y-1">
                               {cap.commit_evidence.slice(0, 3).map((cm) => (
@@ -905,7 +930,7 @@ export function App() {
 
                       <div className="pt-3 border-t border-[#1E242D]">
                         <div className="text-[11px] font-semibold uppercase tracking-wider text-[#FCD34D] mb-1">
-                          Open Handover Questions (Unknowns)
+                          Questions to Ask {cap.primary_owner} Before They Leave
                         </div>
                         <ul className="space-y-1 text-[11px] text-[#94A3B8] list-disc list-inside">
                           {cap.open_questions_for_owner.map((oq, i) => (
@@ -961,29 +986,30 @@ export function App() {
                     <div>
                       <h2 className="text-base font-semibold text-white flex items-center gap-2">
                         <Radar className="w-4 h-4 text-[#2DD4BF]" />
-                        Change Radar — Static Blast Radius & Test Prioritization
+                        Change Radar („If I edit this file, what could break?“)
                       </h2>
                       <p className="text-xs text-[#94A3B8] mt-0.5">
-                        Select any indexed module before editing to inspect direct/indirect
-                        dependents, related unit tests, and every factor of the heuristic priority
-                        score.
+                        Pick a file you plan to edit on the right. RepoWise traces every file and API route that imports it, and tells you which unit tests to run before committing.
                       </p>
                     </div>
 
-                    <select
-                      aria-label="Select file for Change Radar"
-                      value={impactTarget}
-                      onChange={(e) => void loadImpactForFile(activeRepo.id, e.target.value)}
-                      className="bg-[#0B0D10] border border-[#262E3B] rounded-lg px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-[#2DD4BF]"
-                    >
-                      {files
-                        .filter((f) => f.language === 'python')
-                        .map((f) => (
-                          <option key={f.path} value={f.path}>
-                            {f.path}
-                          </option>
-                        ))}
-                    </select>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-[#94A3B8] font-medium">File to edit:</span>
+                      <select
+                        aria-label="Select file for Change Radar"
+                        value={impactTarget}
+                        onChange={(e) => void loadImpactForFile(activeRepo.id, e.target.value)}
+                        className="bg-[#0B0D10] border border-[#262E3B] rounded-lg px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-[#2DD4BF]"
+                      >
+                        {files
+                          .filter((f) => f.language === 'python')
+                          .map((f) => (
+                            <option key={f.path} value={f.path}>
+                              {f.path}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
                   </div>
 
                   {loadingImpact && (
@@ -994,11 +1020,13 @@ export function App() {
 
                   {impactReport && (
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 pt-2">
-                      {/* Heuristic Score & Factors */}
+                      {/* Plain-English Breakdown & Score */}
                       <div className="lg:col-span-5 bg-[#12161E] border border-[#222936] rounded-xl p-4 space-y-4">
                         <div className="flex items-center justify-between">
                           <div>
-                            <div className="text-xs text-[#94A3B8]">Prioritization Heuristic</div>
+                            <div className="text-xs text-[#94A3B8]">
+                              Review Caution Score (0.00 low – 1.00 high)
+                            </div>
                             <div className="text-2xl font-mono font-bold text-white mt-0.5">
                               {impactReport.impact_score}{' '}
                               <span
@@ -1010,7 +1038,7 @@ export function App() {
                                       : 'bg-[#0D9488]/20 text-[#5EEAD4]'
                                 }`}
                               >
-                                {impactReport.priority_label} Priority
+                                {impactReport.priority_label} Caution
                               </span>
                             </div>
                           </div>
@@ -1019,25 +1047,57 @@ export function App() {
                             onClick={() => jumpToCitation(impactReport.target_path, 1)}
                             className="btn-press text-xs font-mono bg-[#181E29] border border-[#2A3344] px-3 py-1.5 rounded-lg text-[#5EEAD4]"
                           >
-                            View File
+                            Open File Code
                           </button>
                         </div>
 
-                        <div className="text-[11px] font-mono text-[#94A3B8] bg-[#0B0D10] p-2.5 rounded border border-[#1E242D]">
-                          Formula: {impactReport.formula}
-                        </div>
-
-                        <div className="space-y-2 text-xs">
-                          {Object.entries(impactReport.factors).map(([k, v]) => (
-                            <div key={k} className="flex items-center justify-between">
-                              <span className="font-mono text-[#94A3B8]">{k}</span>
-                              <span className="font-mono text-white font-semibold">{v}</span>
+                        <div className="space-y-2.5 text-xs bg-[#0B0D10] p-3 rounded-lg border border-[#1E242D]">
+                          <div className="font-semibold text-white">Why this score?</div>
+                          {[
+                            {
+                              label: 'Direct Dependents (35% weight)',
+                              desc: `${impactReport.direct_dependents.length} file(s) directly import this module`,
+                              val: impactReport.factors.normalized_dependent_count,
+                            },
+                            {
+                              label: 'Critical Area / API Route (30% weight)',
+                              desc:
+                                impactReport.factors.critical_module_flag > 0
+                                  ? 'Touches auth, security, DB, or an active API endpoint'
+                                  : 'Internal helper (not marked critical)',
+                              val: impactReport.factors.critical_module_flag,
+                            },
+                            {
+                              label: 'Indirect Chain Reach (20% weight)',
+                              desc: `${impactReport.indirect_dependents.length} further file(s) depend on its callers`,
+                              val: impactReport.factors.normalized_indirect_reach,
+                            },
+                            {
+                              label: 'Missing Test Penalty (15% weight)',
+                              desc:
+                                impactReport.factors.test_gap_flag === 0
+                                  ? 'Covered by direct test imports (0 penalty)'
+                                  : 'No direct test import found (higher caution)',
+                              val: impactReport.factors.test_gap_flag,
+                            },
+                          ].map((row) => (
+                            <div
+                              key={row.label}
+                              className="flex items-start justify-between gap-2 border-b border-[#181D26] last:border-0 pb-2 last:pb-0"
+                            >
+                              <div>
+                                <div className="text-[#ECEFF4] font-medium">{row.label}</div>
+                                <div className="text-[11px] text-[#64748B]">{row.desc}</div>
+                              </div>
+                              <span className="font-mono text-[#5EEAD4] font-semibold shrink-0">
+                                {row.val}
+                              </span>
                             </div>
                           ))}
                         </div>
 
-                        <div className="pt-3 border-t border-[#1E242D] space-y-1 text-[11px] text-[#94A3B8]">
-                          <div className="font-semibold text-[#FCD34D]">Explicit Limitations:</div>
+                        <div className="pt-2 space-y-1 text-[11px] text-[#94A3B8]">
+                          <div className="font-semibold text-[#FCD34D]">What Static Radar Cannot See:</div>
                           {impactReport.limitations.map((lim, i) => (
                             <p key={i}>• {lim}</p>
                           ))}
@@ -1049,14 +1109,17 @@ export function App() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <div className="bg-[#12161E] border border-[#222936] rounded-xl p-4 space-y-2">
                             <div className="text-xs font-semibold uppercase tracking-wider text-[#94A3B8]">
-                              Direct Dependents ({impactReport.direct_dependents.length})
+                              1. Files That Directly Import This ({impactReport.direct_dependents.length})
                             </div>
+                            <p className="text-[11px] text-[#64748B]">
+                              Changing function names or arguments here can immediately break these files:
+                            </p>
                             {impactReport.direct_dependents.length === 0 ? (
-                              <p className="text-xs text-[#64748B]">
-                                No modules directly import this file.
+                              <p className="text-xs text-[#64748B] pt-1">
+                                None — this is a top-level file or entrypoint.
                               </p>
                             ) : (
-                              <ul className="space-y-1">
+                              <ul className="space-y-1 pt-1">
                                 {impactReport.direct_dependents.map((d) => (
                                   <li key={d}>
                                     <button
@@ -1074,14 +1137,17 @@ export function App() {
 
                           <div className="bg-[#12161E] border border-[#222936] rounded-xl p-4 space-y-2">
                             <div className="text-xs font-semibold uppercase tracking-wider text-[#94A3B8]">
-                              Indirect Dependents ({impactReport.indirect_dependents.length})
+                              2. Downstream Ripple Files ({impactReport.indirect_dependents.length})
                             </div>
+                            <p className="text-[11px] text-[#64748B]">
+                              Files that import the callers above (2+ hops away):
+                            </p>
                             {impactReport.indirect_dependents.length === 0 ? (
-                              <p className="text-xs text-[#64748B]">
-                                No multi-hop transitive dependents.
+                              <p className="text-xs text-[#64748B] pt-1">
+                                No multi-hop downstream files affected.
                               </p>
                             ) : (
-                              <ul className="space-y-1">
+                              <ul className="space-y-1 pt-1">
                                 {impactReport.indirect_dependents.map((d) => (
                                   <li key={d}>
                                     <button
@@ -1100,11 +1166,11 @@ export function App() {
 
                         <div className="bg-[#12161E] border border-[#222936] rounded-xl p-4 space-y-2">
                           <div className="text-xs font-semibold uppercase tracking-wider text-[#94A3B8]">
-                            Recommended Tests to Run ({impactReport.related_tests.length})
+                            3. Tests You Should Run After Editing ({impactReport.related_tests.length})
                           </div>
                           {impactReport.related_tests.length === 0 ? (
                             <p className="text-xs text-[#F87171]">
-                              Test gap flagged: no test files import or match this module name.
+                              No automated test imports or matches this file yet — test manually or add a unit test!
                             </p>
                           ) : (
                             <ul className="space-y-1.5">
